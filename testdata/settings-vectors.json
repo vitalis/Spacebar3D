@@ -1,0 +1,987 @@
+{
+ "about": "Settings validation cases for ViewerSettings.normalize. Each result equals defaults with the keys in expect replaced.",
+ "defaults": {
+  "defaultShading": "original",
+  "showGrid": true,
+  "autoRotate": false,
+  "autoplay": true,
+  "backgroundColor": "#07110c",
+  "lightIntensity": 1,
+  "solidColor": "#b4b4b8",
+  "repeatAnimations": false
+ },
+ "cases": [
+  {
+   "name": "empty object gives the defaults",
+   "input": {},
+   "expect": {}
+  },
+  {
+   "name": "repeatAnimations true is taken",
+   "input": {
+    "repeatAnimations": true
+   },
+   "expect": {
+    "repeatAnimations": true
+   }
+  },
+  {
+   "name": "repeatAnimations as the number 1 is not a boolean",
+   "input": {
+    "repeatAnimations": 1
+   },
+   "expect": {}
+  },
+  {
+   "name": "repeatAnimations as a string is ignored",
+   "input": {
+    "repeatAnimations": "true"
+   },
+   "expect": {}
+  },
+  {
+   "name": "every key set to a valid non-default value",
+   "input": {
+    "defaultShading": "hologram",
+    "showGrid": false,
+    "autoRotate": true,
+    "autoplay": false,
+    "backgroundColor": "#123456",
+    "lightIntensity": 1.75,
+    "solidColor": "#abcdef"
+   },
+   "expect": {
+    "defaultShading": "hologram",
+    "showGrid": false,
+    "autoRotate": true,
+    "autoplay": false,
+    "backgroundColor": "#123456",
+    "lightIntensity": 1.75,
+    "solidColor": "#abcdef"
+   }
+  },
+  {
+   "name": "look original is kept",
+   "input": {
+    "defaultShading": "original"
+   },
+   "expect": {
+    "defaultShading": "original"
+   }
+  },
+  {
+   "name": "look wireframe is kept",
+   "input": {
+    "defaultShading": "wireframe"
+   },
+   "expect": {
+    "defaultShading": "wireframe"
+   }
+  },
+  {
+   "name": "look clay is kept",
+   "input": {
+    "defaultShading": "clay"
+   },
+   "expect": {
+    "defaultShading": "clay"
+   }
+  },
+  {
+   "name": "look normals is kept",
+   "input": {
+    "defaultShading": "normals"
+   },
+   "expect": {
+    "defaultShading": "normals"
+   }
+  },
+  {
+   "name": "look unlit is kept",
+   "input": {
+    "defaultShading": "unlit"
+   },
+   "expect": {
+    "defaultShading": "unlit"
+   }
+  },
+  {
+   "name": "look anime is kept",
+   "input": {
+    "defaultShading": "anime"
+   },
+   "expect": {
+    "defaultShading": "anime"
+   }
+  },
+  {
+   "name": "look celShaded is kept",
+   "input": {
+    "defaultShading": "celShaded"
+   },
+   "expect": {
+    "defaultShading": "celShaded"
+   }
+  },
+  {
+   "name": "look hologram is kept",
+   "input": {
+    "defaultShading": "hologram"
+   },
+   "expect": {
+    "defaultShading": "hologram"
+   }
+  },
+  {
+   "name": "legacy look textured becomes original",
+   "input": {
+    "defaultShading": "textured"
+   },
+   "expect": {
+    "defaultShading": "original"
+   }
+  },
+  {
+   "name": "legacy look smooth becomes clay",
+   "input": {
+    "defaultShading": "smooth"
+   },
+   "expect": {
+    "defaultShading": "clay"
+   }
+  },
+  {
+   "name": "legacy look flat becomes clay",
+   "input": {
+    "defaultShading": "flat"
+   },
+   "expect": {
+    "defaultShading": "clay"
+   }
+  },
+  {
+   "name": "legacy look chrome becomes original",
+   "input": {
+    "defaultShading": "chrome"
+   },
+   "expect": {
+    "defaultShading": "original"
+   }
+  },
+  {
+   "name": "legacy look custom becomes original",
+   "input": {
+    "defaultShading": "custom"
+   },
+   "expect": {
+    "defaultShading": "original"
+   }
+  },
+  {
+   "name": "unknown look \"neon\" keeps the default",
+   "input": {
+    "defaultShading": "neon"
+   },
+   "expect": {}
+  },
+  {
+   "name": "unknown look \"Hologram\" keeps the default",
+   "input": {
+    "defaultShading": "Hologram"
+   },
+   "expect": {}
+  },
+  {
+   "name": "unknown look \"HOLOGRAM\" keeps the default",
+   "input": {
+    "defaultShading": "HOLOGRAM"
+   },
+   "expect": {}
+  },
+  {
+   "name": "unknown look \" hologram\" keeps the default",
+   "input": {
+    "defaultShading": " hologram"
+   },
+   "expect": {}
+  },
+  {
+   "name": "unknown look \"\" keeps the default",
+   "input": {
+    "defaultShading": ""
+   },
+   "expect": {}
+  },
+  {
+   "name": "unknown look \"constructor\" keeps the default",
+   "input": {
+    "defaultShading": "constructor"
+   },
+   "expect": {}
+  },
+  {
+   "name": "unknown look \"__proto__\" keeps the default",
+   "input": {
+    "defaultShading": "__proto__"
+   },
+   "expect": {}
+  },
+  {
+   "name": "unknown look \"toString\" keeps the default",
+   "input": {
+    "defaultShading": "toString"
+   },
+   "expect": {}
+  },
+  {
+   "name": "unknown look 3 keeps the default",
+   "input": {
+    "defaultShading": 3
+   },
+   "expect": {}
+  },
+  {
+   "name": "unknown look true keeps the default",
+   "input": {
+    "defaultShading": true
+   },
+   "expect": {}
+  },
+  {
+   "name": "unknown look null keeps the default",
+   "input": {
+    "defaultShading": null
+   },
+   "expect": {}
+  },
+  {
+   "name": "unknown look [\"clay\"] keeps the default",
+   "input": {
+    "defaultShading": [
+     "clay"
+    ]
+   },
+   "expect": {}
+  },
+  {
+   "name": "unknown look {\"a\": 1} keeps the default",
+   "input": {
+    "defaultShading": {
+     "a": 1
+    }
+   },
+   "expect": {}
+  },
+  {
+   "name": "backgroundColor: upper case is lowercased",
+   "input": {
+    "backgroundColor": "#ABCDEF"
+   },
+   "expect": {
+    "backgroundColor": "#abcdef"
+   }
+  },
+  {
+   "name": "backgroundColor: mixed case is lowercased",
+   "input": {
+    "backgroundColor": "#aBc123"
+   },
+   "expect": {
+    "backgroundColor": "#abc123"
+   }
+  },
+  {
+   "name": "backgroundColor: \"#abc\" keeps the default",
+   "input": {
+    "backgroundColor": "#abc"
+   },
+   "expect": {}
+  },
+  {
+   "name": "backgroundColor: \"abcdef\" keeps the default",
+   "input": {
+    "backgroundColor": "abcdef"
+   },
+   "expect": {}
+  },
+  {
+   "name": "backgroundColor: \"#12345g\" keeps the default",
+   "input": {
+    "backgroundColor": "#12345g"
+   },
+   "expect": {}
+  },
+  {
+   "name": "backgroundColor: \"#1234567\" keeps the default",
+   "input": {
+    "backgroundColor": "#1234567"
+   },
+   "expect": {}
+  },
+  {
+   "name": "backgroundColor: \"#12345\" keeps the default",
+   "input": {
+    "backgroundColor": "#12345"
+   },
+   "expect": {}
+  },
+  {
+   "name": "backgroundColor: \"\" keeps the default",
+   "input": {
+    "backgroundColor": ""
+   },
+   "expect": {}
+  },
+  {
+   "name": "backgroundColor: \"#ffffff\\n\" keeps the default",
+   "input": {
+    "backgroundColor": "#ffffff\n"
+   },
+   "expect": {}
+  },
+  {
+   "name": "backgroundColor: \"\\n#ffffff\" keeps the default",
+   "input": {
+    "backgroundColor": "\n#ffffff"
+   },
+   "expect": {}
+  },
+  {
+   "name": "backgroundColor: \" #ffffff\" keeps the default",
+   "input": {
+    "backgroundColor": " #ffffff"
+   },
+   "expect": {}
+  },
+  {
+   "name": "backgroundColor: \"#ffffff \" keeps the default",
+   "input": {
+    "backgroundColor": "#ffffff "
+   },
+   "expect": {}
+  },
+  {
+   "name": "backgroundColor: \"red\" keeps the default",
+   "input": {
+    "backgroundColor": "red"
+   },
+   "expect": {}
+  },
+  {
+   "name": "backgroundColor: \"rgb(1,2,3)\" keeps the default",
+   "input": {
+    "backgroundColor": "rgb(1,2,3)"
+   },
+   "expect": {}
+  },
+  {
+   "name": "backgroundColor: \"#\\uff11\\uff12\\uff13\\uff14\\uff15\\uff16\" keeps the default",
+   "input": {
+    "backgroundColor": "#１２３４５６"
+   },
+   "expect": {}
+  },
+  {
+   "name": "backgroundColor: \"#ffff\\u0000f\" keeps the default",
+   "input": {
+    "backgroundColor": "#ffff\u0000f"
+   },
+   "expect": {}
+  },
+  {
+   "name": "backgroundColor: 123456 keeps the default",
+   "input": {
+    "backgroundColor": 123456
+   },
+   "expect": {}
+  },
+  {
+   "name": "backgroundColor: true keeps the default",
+   "input": {
+    "backgroundColor": true
+   },
+   "expect": {}
+  },
+  {
+   "name": "backgroundColor: null keeps the default",
+   "input": {
+    "backgroundColor": null
+   },
+   "expect": {}
+  },
+  {
+   "name": "backgroundColor: [\"#ffffff\"] keeps the default",
+   "input": {
+    "backgroundColor": [
+     "#ffffff"
+    ]
+   },
+   "expect": {}
+  },
+  {
+   "name": "solidColor: upper case is lowercased",
+   "input": {
+    "solidColor": "#ABCDEF"
+   },
+   "expect": {
+    "solidColor": "#abcdef"
+   }
+  },
+  {
+   "name": "solidColor: mixed case is lowercased",
+   "input": {
+    "solidColor": "#aBc123"
+   },
+   "expect": {
+    "solidColor": "#abc123"
+   }
+  },
+  {
+   "name": "solidColor: \"#abc\" keeps the default",
+   "input": {
+    "solidColor": "#abc"
+   },
+   "expect": {}
+  },
+  {
+   "name": "solidColor: \"abcdef\" keeps the default",
+   "input": {
+    "solidColor": "abcdef"
+   },
+   "expect": {}
+  },
+  {
+   "name": "solidColor: \"#12345g\" keeps the default",
+   "input": {
+    "solidColor": "#12345g"
+   },
+   "expect": {}
+  },
+  {
+   "name": "solidColor: \"#1234567\" keeps the default",
+   "input": {
+    "solidColor": "#1234567"
+   },
+   "expect": {}
+  },
+  {
+   "name": "solidColor: \"#12345\" keeps the default",
+   "input": {
+    "solidColor": "#12345"
+   },
+   "expect": {}
+  },
+  {
+   "name": "solidColor: \"\" keeps the default",
+   "input": {
+    "solidColor": ""
+   },
+   "expect": {}
+  },
+  {
+   "name": "solidColor: \"#ffffff\\n\" keeps the default",
+   "input": {
+    "solidColor": "#ffffff\n"
+   },
+   "expect": {}
+  },
+  {
+   "name": "solidColor: \"\\n#ffffff\" keeps the default",
+   "input": {
+    "solidColor": "\n#ffffff"
+   },
+   "expect": {}
+  },
+  {
+   "name": "solidColor: \" #ffffff\" keeps the default",
+   "input": {
+    "solidColor": " #ffffff"
+   },
+   "expect": {}
+  },
+  {
+   "name": "solidColor: \"#ffffff \" keeps the default",
+   "input": {
+    "solidColor": "#ffffff "
+   },
+   "expect": {}
+  },
+  {
+   "name": "solidColor: \"red\" keeps the default",
+   "input": {
+    "solidColor": "red"
+   },
+   "expect": {}
+  },
+  {
+   "name": "solidColor: \"rgb(1,2,3)\" keeps the default",
+   "input": {
+    "solidColor": "rgb(1,2,3)"
+   },
+   "expect": {}
+  },
+  {
+   "name": "solidColor: \"#\\uff11\\uff12\\uff13\\uff14\\uff15\\uff16\" keeps the default",
+   "input": {
+    "solidColor": "#１２３４５６"
+   },
+   "expect": {}
+  },
+  {
+   "name": "solidColor: \"#ffff\\u0000f\" keeps the default",
+   "input": {
+    "solidColor": "#ffff\u0000f"
+   },
+   "expect": {}
+  },
+  {
+   "name": "solidColor: 123456 keeps the default",
+   "input": {
+    "solidColor": 123456
+   },
+   "expect": {}
+  },
+  {
+   "name": "solidColor: true keeps the default",
+   "input": {
+    "solidColor": true
+   },
+   "expect": {}
+  },
+  {
+   "name": "solidColor: null keeps the default",
+   "input": {
+    "solidColor": null
+   },
+   "expect": {}
+  },
+  {
+   "name": "solidColor: [\"#ffffff\"] keeps the default",
+   "input": {
+    "solidColor": [
+     "#ffffff"
+    ]
+   },
+   "expect": {}
+  },
+  {
+   "name": "lightIntensity 0.1 becomes 0.1",
+   "input": {
+    "lightIntensity": 0.1
+   },
+   "expect": {
+    "lightIntensity": 0.1
+   }
+  },
+  {
+   "name": "lightIntensity 3 becomes 3",
+   "input": {
+    "lightIntensity": 3
+   },
+   "expect": {
+    "lightIntensity": 3
+   }
+  },
+  {
+   "name": "lightIntensity 1.5 becomes 1.5",
+   "input": {
+    "lightIntensity": 1.5
+   },
+   "expect": {
+    "lightIntensity": 1.5
+   }
+  },
+  {
+   "name": "lightIntensity 2 becomes 2",
+   "input": {
+    "lightIntensity": 2
+   },
+   "expect": {
+    "lightIntensity": 2
+   }
+  },
+  {
+   "name": "lightIntensity 0.05 becomes 0.1",
+   "input": {
+    "lightIntensity": 0.05
+   },
+   "expect": {
+    "lightIntensity": 0.1
+   }
+  },
+  {
+   "name": "lightIntensity 0 becomes 0.1",
+   "input": {
+    "lightIntensity": 0
+   },
+   "expect": {
+    "lightIntensity": 0.1
+   }
+  },
+  {
+   "name": "lightIntensity -5 becomes 0.1",
+   "input": {
+    "lightIntensity": -5
+   },
+   "expect": {
+    "lightIntensity": 0.1
+   }
+  },
+  {
+   "name": "lightIntensity 3.0001 becomes 3",
+   "input": {
+    "lightIntensity": 3.0001
+   },
+   "expect": {
+    "lightIntensity": 3
+   }
+  },
+  {
+   "name": "lightIntensity 99 becomes 3",
+   "input": {
+    "lightIntensity": 99
+   },
+   "expect": {
+    "lightIntensity": 3
+   }
+  },
+  {
+   "name": "lightIntensity 1e+30 becomes 3",
+   "input": {
+    "lightIntensity": 1e+30
+   },
+   "expect": {
+    "lightIntensity": 3
+   }
+  },
+  {
+   "name": "lightIntensity -1e+30 becomes 0.1",
+   "input": {
+    "lightIntensity": -1e+30
+   },
+   "expect": {
+    "lightIntensity": 0.1
+   }
+  },
+  {
+   "name": "lightIntensity \"1.5\" keeps the default",
+   "input": {
+    "lightIntensity": "1.5"
+   },
+   "expect": {}
+  },
+  {
+   "name": "lightIntensity \"\" keeps the default",
+   "input": {
+    "lightIntensity": ""
+   },
+   "expect": {}
+  },
+  {
+   "name": "lightIntensity true keeps the default",
+   "input": {
+    "lightIntensity": true
+   },
+   "expect": {}
+  },
+  {
+   "name": "lightIntensity false keeps the default",
+   "input": {
+    "lightIntensity": false
+   },
+   "expect": {}
+  },
+  {
+   "name": "lightIntensity null keeps the default",
+   "input": {
+    "lightIntensity": null
+   },
+   "expect": {}
+  },
+  {
+   "name": "lightIntensity [1] keeps the default",
+   "input": {
+    "lightIntensity": [
+     1
+    ]
+   },
+   "expect": {}
+  },
+  {
+   "name": "lightIntensity {\"v\": 1} keeps the default",
+   "input": {
+    "lightIntensity": {
+     "v": 1
+    }
+   },
+   "expect": {}
+  },
+  {
+   "name": "showGrid: true is kept",
+   "input": {
+    "showGrid": true
+   },
+   "expect": {
+    "showGrid": true
+   }
+  },
+  {
+   "name": "showGrid: false is kept",
+   "input": {
+    "showGrid": false
+   },
+   "expect": {
+    "showGrid": false
+   }
+  },
+  {
+   "name": "autoRotate: true is kept",
+   "input": {
+    "autoRotate": true
+   },
+   "expect": {
+    "autoRotate": true
+   }
+  },
+  {
+   "name": "autoRotate: false is kept",
+   "input": {
+    "autoRotate": false
+   },
+   "expect": {
+    "autoRotate": false
+   }
+  },
+  {
+   "name": "autoplay: true is kept",
+   "input": {
+    "autoplay": true
+   },
+   "expect": {
+    "autoplay": true
+   }
+  },
+  {
+   "name": "autoplay: false is kept",
+   "input": {
+    "autoplay": false
+   },
+   "expect": {
+    "autoplay": false
+   }
+  },
+  {
+   "name": "showShadingButton: true is kept",
+   "input": {},
+   "expect": {}
+  },
+  {
+   "name": "showShadingButton: false is kept",
+   "input": {},
+   "expect": {}
+  },
+  {
+   "name": "showFitButton: true is kept",
+   "input": {},
+   "expect": {}
+  },
+  {
+   "name": "showFitButton: false is kept",
+   "input": {},
+   "expect": {}
+  },
+  {
+   "name": "showLightButton: true is kept",
+   "input": {},
+   "expect": {}
+  },
+  {
+   "name": "showLightButton: false is kept",
+   "input": {},
+   "expect": {}
+  },
+  {
+   "name": "showGridButton: true is kept",
+   "input": {},
+   "expect": {}
+  },
+  {
+   "name": "showGridButton: false is kept",
+   "input": {},
+   "expect": {}
+  },
+  {
+   "name": "showRotateButton: true is kept",
+   "input": {},
+   "expect": {}
+  },
+  {
+   "name": "showRotateButton: false is kept",
+   "input": {},
+   "expect": {}
+  },
+  {
+   "name": "showAnimationBar: true is kept",
+   "input": {},
+   "expect": {}
+  },
+  {
+   "name": "showAnimationBar: false is kept",
+   "input": {},
+   "expect": {}
+  },
+  {
+   "name": "showGizmo: true is kept",
+   "input": {},
+   "expect": {}
+  },
+  {
+   "name": "showGizmo: false is kept",
+   "input": {},
+   "expect": {}
+  },
+  {
+   "name": "showStats: true is kept",
+   "input": {},
+   "expect": {}
+  },
+  {
+   "name": "showStats: false is kept",
+   "input": {},
+   "expect": {}
+  },
+  {
+   "name": "booleans: 0 keeps the defaults",
+   "input": {
+    "showGrid": 0,
+    "autoRotate": 0,
+    "autoplay": 0
+   },
+   "expect": {}
+  },
+  {
+   "name": "booleans: 1 keeps the defaults",
+   "input": {
+    "showGrid": 1,
+    "autoRotate": 1,
+    "autoplay": 1
+   },
+   "expect": {}
+  },
+  {
+   "name": "booleans: \"true\" keeps the defaults",
+   "input": {
+    "showGrid": "true",
+    "autoRotate": "true",
+    "autoplay": "true"
+   },
+   "expect": {}
+  },
+  {
+   "name": "booleans: \"false\" keeps the defaults",
+   "input": {
+    "showGrid": "false",
+    "autoRotate": "false",
+    "autoplay": "false"
+   },
+   "expect": {}
+  },
+  {
+   "name": "booleans: \"\" keeps the defaults",
+   "input": {
+    "showGrid": "",
+    "autoRotate": "",
+    "autoplay": ""
+   },
+   "expect": {}
+  },
+  {
+   "name": "booleans: null keeps the defaults",
+   "input": {
+    "showGrid": null,
+    "autoRotate": null,
+    "autoplay": null
+   },
+   "expect": {}
+  },
+  {
+   "name": "booleans: [true] keeps the defaults",
+   "input": {
+    "showGrid": [
+     true
+    ],
+    "autoRotate": [
+     true
+    ],
+    "autoplay": [
+     true
+    ]
+   },
+   "expect": {}
+  },
+  {
+   "name": "booleans: {\"v\": true} keeps the defaults",
+   "input": {
+    "showGrid": {
+     "v": true
+    },
+    "autoRotate": {
+     "v": true
+    },
+    "autoplay": {
+     "v": true
+    }
+   },
+   "expect": {}
+  },
+  {
+   "name": "booleans: 1.5 keeps the defaults",
+   "input": {
+    "showGrid": 1.5,
+    "autoRotate": 1.5,
+    "autoplay": 1.5
+   },
+   "expect": {}
+  },
+  {
+   "name": "unknown keys are ignored",
+   "input": {
+    "evil": 1,
+    "constructor": "x",
+    "toString": "y",
+    "showProjectionButton": true,
+    "defaultshading": "clay",
+    "ShowGrid": false
+   },
+   "expect": {}
+  },
+  {
+   "name": "a valid key survives beside invalid ones",
+   "input": {
+    "defaultShading": "nope",
+    "showGrid": false,
+    "backgroundColor": "bad",
+    "solidColor": "#00FF00",
+    "lightIntensity": "x"
+   },
+   "expect": {
+    "showGrid": false,
+    "solidColor": "#00ff00"
+   }
+  },
+  {
+   "name": "obsolete control visibility preferences are ignored",
+   "input": {
+    "showAnimationBar": false,
+    "showFitButton": false,
+    "showGizmo": false,
+    "showGridButton": false,
+    "showLightButton": false,
+    "showRotateButton": false,
+    "showShadingButton": false,
+    "showStats": false
+   },
+   "expect": {}
+  }
+ ]
+}

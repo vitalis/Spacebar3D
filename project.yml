@@ -1,0 +1,341 @@
+name: Spacebar3D
+options:
+  bundleIdPrefix: com.vitalis
+  deploymentTarget:
+    macOS: "26.0"
+  createIntermediateGroups: true
+  developmentLanguage: en
+
+# Formats, the viewer interface and the Metal renderer are a local Swift package shared by
+# both targets.
+packages:
+  Spacebar3DKit:
+    path: Packages/Spacebar3DKit
+  # Tests only, and the same package Spacebar3DKit's own tests already use: reads the
+  # app's SwiftUI views in the test process.
+  ViewInspector:
+    url: https://github.com/nalexn/ViewInspector
+    from: 0.10.0
+
+settings:
+  base:
+    MARKETING_VERSION: "1.0.0"
+    CURRENT_PROJECT_VERSION: "2"
+    SWIFT_VERSION: "5.0"
+    # Signed with the team's development identity. A team signature is required: the app
+    # and the extension share settings through an App Group (see the entitlements files),
+    # which an ad-hoc ("-") signature cannot join.
+    DEVELOPMENT_TEAM: V3AQWQ8JMY
+    CODE_SIGN_IDENTITY: "Apple Development"
+    CODE_SIGN_STYLE: Automatic
+    # Apple silicon only.
+    ARCHS: arm64
+
+schemes:
+  # Unit tests for the App, Extension and Shared sources (compiled straight into the test
+  # bundle, so no host app or sandbox is involved):  xcodebuild test -scheme Spacebar3DTests
+  Spacebar3DTests:
+    build:
+      targets:
+        Spacebar3DTests: [test]
+    test:
+      targets:
+        - Spacebar3DTests
+        - package: Spacebar3DKit/ModelCoreTests
+        - package: Spacebar3DKit/ViewerUITests
+        - package: Spacebar3DKit/ImportModelIOTests
+        - package: Spacebar3DKit/ImportTextTests
+        - package: Spacebar3DKit/ImportAssimpTests
+        - package: Spacebar3DKit/ImportThreeMFTests
+        - package: Spacebar3DKit/ImportGLTFTests
+        - package: Spacebar3DKit/ImportBlendTests
+        - package: Spacebar3DKit/RenderMetalTests
+
+targets:
+  # ---------------------------------------------------------------------
+  # Host app (the container that ships and distributes the extension)
+  # ---------------------------------------------------------------------
+  Spacebar3D:
+    type: application
+    platform: macOS
+    sources:
+      - Spacebar3D/App
+      - Spacebar3D/Shared
+      # The licence notices, shown by the app's Acknowledgements window.
+      - path: LICENSE
+        buildPhase: resources
+      - path: PRIVACY.md
+        buildPhase: resources
+      - path: CREDITS.md
+        buildPhase: resources
+      - path: THIRD_PARTY_LICENSES.md
+        buildPhase: resources
+    info:
+      path: Spacebar3D/App/Info.plist
+      # NOTE: XcodeGen generates Info.plist from the properties below (don't hand-edit it)
+      properties:
+        CFBundleLocalizations: [en, zh-Hans, es, fr, de, ja, pt-BR, ko, it, ru]
+        CFBundleDisplayName: Spacebar 3D
+        # The name in the menu bar; the same as everywhere else the app is named.
+        CFBundleName: Spacebar 3D
+        P3DReleaseMediaCapture: $(SPACEBAR3D_MEDIA_CAPTURE_CONDITION)
+        # What the Mac App Store asks of every app: where it is listed, whose it is, and
+        # that it uses no encryption of its own (zstd is compression).
+        LSApplicationCategoryType: public.app-category.graphics-design
+        NSHumanReadableCopyright: "Copyright © 2026 Vitaly Gorodetsky. Apache License 2.0. Credits and third-party notices included."
+        ITSAppUsesNonExemptEncryption: false
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        NSPrincipalClass: NSApplication
+        # Files the in-app viewer can open (File > Open…, "Open With" in Finder).
+        # Alternate rank offers Open With without claiming ownership. The Settings
+        # button explicitly changes the default through NSWorkspace when requested.
+        CFBundleDocumentTypes:
+          - CFBundleTypeName: 3D Model
+            CFBundleTypeRole: Viewer
+            LSHandlerRank: Alternate
+            LSItemContentTypes:
+              - public.geometry-definition-format
+              - public.standard-tesselated-geometry-format
+              - com.pixar.universal-scene-description-mobile
+              - public.polygon-file-format
+              - com.pixar.universal-scene-description
+              - com.pixar.universal-scene-description-binary
+              - com.pixar.universal-scene-description-utf8
+              - org.khronos.gltf
+              - com.autodesk.mac.3ds
+              - com.autodesk.3ds
+              - org.3mf.3mf
+              - org.blenderfoundation.blender.file
+              - org.khronos.glb
+              - com.autodesk.fbx
+              - com.autodesk.mac.fbx
+              - com.vrm.vrm
+              - com.vrm.vrma
+          # Files that stand beside a model under its own name (ship.obj and ship.mtl):
+          # declaring them as related lets the sandbox hand them over with the model,
+          # without asking for the folder. Keep in step with SidecarFolder.relatedExtensions.
+          - CFBundleTypeName: Model Material or Data
+            CFBundleTypeRole: None
+            LSHandlerRank: None
+            NSIsRelatedItemType: true
+            CFBundleTypeExtensions: [mtl, bin, png, jpg, jpeg, tga, bmp, webp]
+        LSMinimumSystemVersion: $(MACOSX_DEPLOYMENT_TARGET)
+        # UTI declarations so the OS recognizes .vrm / .vrma / .fbx (also declared on the host app).
+        # .vrma has no standard UTI; left alone it gets a dynamic UTI, so we declare our own.
+        UTImportedTypeDeclarations:
+          - UTTypeIdentifier: com.vrm.vrm
+            UTTypeDescription: VRM 3D Avatar
+            UTTypeConformsTo:
+              - public.data
+            UTTypeTagSpecification:
+              public.filename-extension:
+                - vrm
+          - UTTypeIdentifier: com.vrm.vrma
+            UTTypeDescription: VRM Animation
+            UTTypeConformsTo:
+              - public.data
+            UTTypeTagSpecification:
+              public.filename-extension:
+                - vrma
+          - UTTypeIdentifier: com.autodesk.fbx
+            UTTypeDescription: FBX 3D Model
+            UTTypeConformsTo:
+              - public.data
+              - public.3d-content
+            UTTypeTagSpecification:
+              public.filename-extension:
+                - fbx
+          - UTTypeIdentifier: com.autodesk.3ds
+            UTTypeDescription: 3D Studio Model
+            UTTypeConformsTo:
+              - public.data
+              - public.3d-content
+            UTTypeTagSpecification:
+              public.filename-extension:
+                - 3ds
+          - UTTypeIdentifier: org.3mf.3mf
+            UTTypeDescription: 3MF Model
+            UTTypeConformsTo:
+              - public.data
+              - public.3d-content
+            UTTypeTagSpecification:
+              public.filename-extension:
+                - 3mf
+          # Blender.app declares this type itself; this covers Macs without Blender.
+          - UTTypeIdentifier: org.blenderfoundation.blender.file
+            UTTypeDescription: Blender File
+            UTTypeConformsTo:
+              - public.data
+            UTTypeTagSpecification:
+              public.filename-extension:
+                - blend
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.vitalis.Spacebar3D
+        CODE_SIGN_ENTITLEMENTS: Spacebar3D/App/Spacebar3D.entitlements
+        # The app's file is named as the app is; its code keeps the project's name.
+        PRODUCT_NAME: Spacebar 3D
+        PRODUCT_MODULE_NAME: Spacebar3D
+        SWIFT_ACTIVE_COMPILATION_CONDITIONS: $(inherited) $(SPACEBAR3D_MEDIA_CAPTURE_CONDITION)
+        ENABLE_HARDENED_RUNTIME: YES
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+    dependencies:
+      - target: Spacebar3DExtension
+        embed: true
+      - package: Spacebar3DKit
+        product: ModelCore
+      - package: Spacebar3DKit
+        product: ViewerUI
+
+  # ---------------------------------------------------------------------
+  # Quick Look preview extension (the actual plugin)
+  # ---------------------------------------------------------------------
+  Spacebar3DExtension:
+    type: app-extension
+    platform: macOS
+    sources:
+      - path: Spacebar3D/Extension
+        excludes:
+          - Info.plist
+      - Spacebar3D/Shared
+      - path: PRIVACY.md
+        buildPhase: resources
+      - path: LICENSE
+        buildPhase: resources
+      - path: CREDITS.md
+        buildPhase: resources
+      - path: THIRD_PARTY_LICENSES.md
+        buildPhase: resources
+    info:
+      path: Spacebar3D/Extension/Info.plist
+      # NOTE: XcodeGen generates Info.plist from the properties below (don't hand-edit it)
+      properties:
+        CFBundleLocalizations: [en, zh-Hans, es, fr, de, ja, pt-BR, ko, it, ru]
+        CFBundleDisplayName: Spacebar 3D
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
+        # Declares this as a Quick Look extension
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.quicklook.preview
+          NSExtensionPrincipalClass: $(PRODUCT_MODULE_NAME).PreviewViewController
+          NSExtensionAttributes:
+            # UTIs this plugin can preview
+            #   com.vrm.vrm / .vrma … our own UTIs declared below
+            #   org.khronos.glb      … macOS's built-in UTI for GLB (no declaration needed)
+            #   com.autodesk.*.fbx   … FBX UTIs (both registered to absorb environment differences)
+            #   public.geometry-definition-format … macOS's built-in UTI for Wavefront OBJ
+            #   public.standard-tesselated-geometry-format … macOS's built-in UTI for STL
+            #   com.pixar.universal-scene-description-mobile … macOS's built-in UTI for USDZ
+            #   public.polygon-file-format, com.pixar.universal-scene-description*,
+            #   org.khronos.gltf … macOS's built-in UTIs for PLY, USD and glTF
+            #   com.autodesk.*3ds, org.3mf.3mf … 3DS and 3MF have no built-in UTI (declared below)
+            QLSupportedContentTypes:
+              - com.vrm.vrm
+              - com.vrm.vrma
+              - org.khronos.glb
+              - com.autodesk.mac.fbx
+              - com.autodesk.fbx
+              - public.geometry-definition-format
+              - public.standard-tesselated-geometry-format
+              - com.pixar.universal-scene-description-mobile
+              - public.polygon-file-format
+              - com.pixar.universal-scene-description
+              - com.pixar.universal-scene-description-binary
+              - com.pixar.universal-scene-description-utf8
+              - org.khronos.gltf
+              - com.autodesk.mac.3ds
+              - com.autodesk.3ds
+              - org.3mf.3mf
+              - org.blenderfoundation.blender.file
+            QLSupportsSearchableItems: false
+        # Tell the OS about the .vrm / .vrma / .fbx extensions and UTIs
+        # (.glb already has macOS's built-in org.khronos.glb, so no declaration needed)
+        UTImportedTypeDeclarations:
+          - UTTypeIdentifier: com.vrm.vrm
+            UTTypeDescription: VRM 3D Avatar
+            UTTypeConformsTo:
+              - public.data
+            UTTypeTagSpecification:
+              public.filename-extension:
+                - vrm
+          - UTTypeIdentifier: com.vrm.vrma
+            UTTypeDescription: VRM Animation
+            UTTypeConformsTo:
+              - public.data
+            UTTypeTagSpecification:
+              public.filename-extension:
+                - vrma
+          - UTTypeIdentifier: com.autodesk.fbx
+            UTTypeDescription: FBX 3D Model
+            UTTypeConformsTo:
+              - public.data
+              - public.3d-content
+            UTTypeTagSpecification:
+              public.filename-extension:
+                - fbx
+          - UTTypeIdentifier: com.autodesk.3ds
+            UTTypeDescription: 3D Studio Model
+            UTTypeConformsTo:
+              - public.data
+              - public.3d-content
+            UTTypeTagSpecification:
+              public.filename-extension:
+                - 3ds
+          - UTTypeIdentifier: org.3mf.3mf
+            UTTypeDescription: 3MF Model
+            UTTypeConformsTo:
+              - public.data
+              - public.3d-content
+            UTTypeTagSpecification:
+              public.filename-extension:
+                - 3mf
+          # Blender.app declares this type itself; this covers Macs without Blender.
+          - UTTypeIdentifier: org.blenderfoundation.blender.file
+            UTTypeDescription: Blender File
+            UTTypeConformsTo:
+              - public.data
+            UTTypeTagSpecification:
+              public.filename-extension:
+                - blend
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.vitalis.Spacebar3D.Extension
+        CODE_SIGN_ENTITLEMENTS: Spacebar3D/Extension/Spacebar3DExtension.entitlements
+        ENABLE_HARDENED_RUNTIME: YES
+    dependencies:
+      - package: Spacebar3DKit
+        product: ModelCore
+      - package: Spacebar3DKit
+        product: ViewerUI
+
+  # ---------------------------------------------------------------------
+  # Unit tests
+  # ---------------------------------------------------------------------
+  Spacebar3DTests:
+    type: bundle.unit-test
+    platform: macOS
+    sources:
+      - Spacebar3DTests
+      - Spacebar3D/Shared
+      # The app's and the extension's own code, compiled into the bundle as the Shared
+      # sources are. The app is never launched: its `@main` is just a type here.
+      - path: Spacebar3D/App
+        includes:
+          - "*.swift"
+      - path: Spacebar3D/Extension
+        includes:
+          - "*.swift"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.vitalis.Spacebar3DTests
+        GENERATE_INFOPLIST_FILE: YES
+        # The bundle has an Info.plist of its own making. Left unset, XcodeGen would take
+        # the app's, found among the sources above, and with it the app's principal class.
+        INFOPLIST_FILE: ""
+    dependencies:
+      - package: Spacebar3DKit
+        product: ModelCore
+      - package: Spacebar3DKit
+        product: ViewerUI
+      - package: ViewInspector
